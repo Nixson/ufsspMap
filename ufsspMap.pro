@@ -16,12 +16,16 @@ SOURCES += main.cpp\
         mainmap.cpp \
     upointer.cpp \
     scenetypes.cpp \
-    adminform.cpp
+    adminform.cpp \
+    airobject.cpp \
+    graphicsscene.cpp
 
 HEADERS  += mainmap.h \
     scenetypes.h \
     upointer.h \
-    adminform.h
+    adminform.h \
+    airobject.h \
+    graphicsscene.h
 
 FORMS    += mainmap.ui \
     adminform.ui

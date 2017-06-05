@@ -22,6 +22,9 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     void mousePressEvent(QMouseEvent *mouse) override;
 
+public slots:
+    void slotDisplay(QPointF point);
+
 private slots:
     void on_btnRG_clicked();
 

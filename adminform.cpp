@@ -20,23 +20,23 @@ AdminForm::~AdminForm()
 void AdminForm::on_bgImg_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Файл карты"), upointer->getConfDir(),
-            tr("Изображения (*.png);;Все файлы (*.*)"));
+                                                    tr("Изображения (*.png);;Все файлы (*.*)"));
     if (fileName != "") {
-            QFile file(fileName);
-            if (!file.open(QIODevice::ReadOnly)) {
-                QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-                return;
-            }
-            file.close();
-            QString oldImgPath = upointer->getConfDir()+"mainMap.png";
-            ui->bgLine->setText(fileName);
-            QFile fileOld(oldImgPath);
-            if(fileOld.exists())
-                fileOld.remove();
-            QFile::copy(fileName,oldImgPath);
-            upointer->setBg(oldImgPath);
-
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+            return;
         }
+        file.close();
+        QString oldImgPath = upointer->getConfDir()+"mainMap.png";
+        ui->bgLine->setText(fileName);
+        QFile fileOld(oldImgPath);
+        if(fileOld.exists())
+            fileOld.remove();
+        QFile::copy(fileName,oldImgPath);
+        upointer->setBg(oldImgPath);
+
+    }
 }
 void AdminForm::setPointer(UPointer *up){
     upointer = up;

@@ -4,8 +4,9 @@
 #include <QApplication>
 #include <QGraphicsPixmapItem>
 
-UPointer::UPointer(QString mainConfDir, QObject *parent) : QObject(parent), scene(new QGraphicsScene), isEditLine(false), isEditImg(false)
+UPointer::UPointer(QString mainConfDir, QObject *parent) : QObject(parent), isEditLine(false), isEditImg(false)
 {
+    scene=new GraphicsScene();
     confdir = mainConfDir;
     reLoad();
     QPixmap pixData(conf.backGround);
@@ -15,8 +16,29 @@ UPointer::UPointer(QString mainConfDir, QObject *parent) : QObject(parent), scen
     scene->addPixmap(pic);
     mainPosition.x = 0;
     mainPosition.y = 0;
+    // создание таймера для анимации воздушных целей
+    animationTimer=new QTimer(this);
+    connect(animationTimer, SIGNAL(timeout()), scene, SLOT(advance()));
+    animationTimer->start(5000);
+
+
+
+    iPoint one=conf.airObject.at(0).airPoint.at(0);
+    iPoint two=conf.airObject.at(0).airPoint.at(1);
+
+    fPoint f=calcDelta(one, two,1000);
+    AirObject* obj=new AirObject(f.x, f.y,calcAngle(one,two));
+    obj->setPos(one.x,two.y);
+
+//    QGraphicsEllipseItem* el=new QGraphicsEllipseItem(conf.airPoint.at(0).x-2,conf.airPoint.at(0).y-2,4,4);
+//    el->setBrush(Qt::red);
+//    QGraphicsEllipseItem* el2=new QGraphicsEllipseItem(conf.airPoint.at(1).x, conf.airPoint.at(1).y, 4,4);
+//    el2->setBrush(Qt::red);
+//    scene->addItem(el2);
+//    scene->addItem(el);
+    scene->addItem(obj);
 }
-QGraphicsScene * UPointer::getScene() {
+GraphicsScene * UPointer::getScene() {
     return scene;
 }
 QString UPointer::getConfDir(){
@@ -45,8 +67,8 @@ void UPointer::reWrite(int width, int height){
     int picHeight = pic.height();
     int grWidth = width;
     int grHeight = height;
-    qreal left = (qreal)(picWidth - grWidth)/2;
-    qreal top = (qreal)(picHeight - grHeight)/2;
+    left = (qreal)(picWidth - grWidth)/2;
+    top = (qreal)(picHeight - grHeight)/2;
     scene->setSceneRect(left,top,grWidth-4,grHeight-4);
     if(groupList.size() > 0){
         for(int i = 0, size = groupList.size(); i < size; i++){
@@ -74,6 +96,25 @@ void UPointer::addImg(iDataImages image){
     itm->setOffset(image.position.x,image.position.y);
     scene->addItem(itm);
 }
+
+qreal UPointer:: calcAngle(iPoint begin, iPoint end)
+{
+    qreal angle=atan((end.x-begin.x)/(end.y-begin.y));
+    angle=angle*(180/3.14159)+90;
+    return angle;
+}
+
+fPoint UPointer::calcDelta(iPoint begin, iPoint end,float speed)
+{ fPoint f;
+    float a;
+    a=speed/(60.0*60.0); //1000 км/ч -> км/с
+    float hyp=sqrt(pow(end.x-begin.x,2)+pow(end.y-begin.y,2));// находим общее ратояние полета (гипотенузу)
+    float time=hyp/a;
+    f.x=((end.x-begin.x))/time;
+    f.y=((end.y-begin.y))/time;
+    return f;
+}
+
 fPoint UPointer::toCoord(iPoint position){
     fPoint coord;
     float deltaX = conf.lastPosition.x - conf.zPosition.x;
@@ -121,6 +162,8 @@ fPoint UPointer::getzPosition(){
 fPoint UPointer::getlastPosition(){
     return conf.lastPosition;
 }
+
+
 void UPointer::reLoad(){
     QString filename = confdir+"config.ob";
     QFile loadFile(filename);
@@ -144,6 +187,16 @@ void UPointer::reLoad(){
         last.x = 0.0;
         last.y = 0.0;
         conf.lastPosition = last;
+
+        iPoint i;
+        i.x=10+967,i.y=10+603;
+        iPoint j;
+        j.x=150+967,j.y=150+603;
+        flightRoute firstRoute;
+        firstRoute.targetNumber=1;
+        firstRoute.airPoint.append(i);
+        firstRoute.airPoint.append(j);
+        conf.airObject.append(firstRoute);
     }
 
 }
@@ -153,16 +206,16 @@ void UPointer::setBg(QString bg){
 }
 void UPointer::save() {
     QString filename = confdir+"config.ob";
-       QFile loadFile(filename);
-       if (!loadFile.open(QIODevice::WriteOnly))
-       {
-           qDebug() << "Could not write to file:" << filename << "Error string:" << loadFile.errorString();
-           return;
-       }
-       QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-       QDataStream out(&loadFile);
-       out.setVersion(QDataStream::Qt_5_3);
-       out << conf;
-       QApplication::restoreOverrideCursor();
-       loadFile.close();
+    QFile loadFile(filename);
+    if (!loadFile.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Could not write to file:" << filename << "Error string:" << loadFile.errorString();
+        return;
+    }
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    QDataStream out(&loadFile);
+    out.setVersion(QDataStream::Qt_5_3);
+    out << conf;
+    QApplication::restoreOverrideCursor();
+    loadFile.close();
 }
