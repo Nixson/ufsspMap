@@ -70,6 +70,24 @@ QDataStream &operator<<(QDataStream &out, const iGroup &str)
     out << str.name;
     return out;
 }
+QDataStream &operator>>(QDataStream &out,flightRoute &str)
+{
+    out >> str.airPoint;
+    out >> str.targetNumber;
+    out >> str.OGP;
+    out >> str.typeAirObj;
+    out >> str.count;
+    return out;
+}
+QDataStream &operator<<(QDataStream &out, const flightRoute &str)
+{
+    out << str.airPoint;
+    out << str.targetNumber;
+    out << str.OGP;
+    out << str.typeAirObj;
+    out << str.count;
+    return out;
+}
 QDataStream &operator>>(QDataStream &out, iGroup &str)
 {
     out >> str.group;
@@ -79,6 +97,7 @@ QDataStream &operator>>(QDataStream &out, iGroup &str)
     return out;
 }
 
+
 QDataStream &operator<<(QDataStream &out, const iConfig &str)
 {
     out << str.backGround;
@@ -87,6 +106,7 @@ QDataStream &operator<<(QDataStream &out, const iConfig &str)
     out << str.lastPosition;
     out << str.zoom;
     out << str.zPosition;
+    out << str.airObject;
     return out;
 }
 QDataStream &operator>>(QDataStream &out, iConfig &str)
@@ -97,6 +117,7 @@ QDataStream &operator>>(QDataStream &out, iConfig &str)
     out >> str.lastPosition;
     out >> str.zoom;
     out >> str.zPosition;
+    out >> str.airObject;
     return out;
 }
 

@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/player_end.png</file>
+        <file>icon/player_fwd.png</file>
+        <file>icon/player_rev.png</file>
+        <file>icon/player_start.png</file>
+        <file>MyImage/foreign.png</file>
+        <file>MyImage/own.png</file>
+        <file>MyImage/KP_RTV.png</file>
+        <file>MyImage/PU-ORLR.png</file>
+        <file>MyImage/KP_RTB.png</file>
+    </qresource>
+</RCC>

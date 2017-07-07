@@ -34,6 +34,14 @@ typedef struct iGroup_str {
     QList <iDataImages> images;
 } iGroup;
 
+typedef struct flightRoute_str {
+    QList <iPoint> airPoint;
+    qreal targetNumber;
+    int OGP;
+    int typeAirObj;
+    int count;
+}flightRoute;
+
 typedef struct iConfig_str {
     QString backGround;
     QList <QString> imgList;
@@ -41,6 +49,7 @@ typedef struct iConfig_str {
     fPoint zPosition;
     fPoint lastPosition;
     QList <iGroup> groups;
+    QList<flightRoute>airObject;
 } iConfig;
 
 
